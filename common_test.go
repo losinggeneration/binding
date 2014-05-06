@@ -39,6 +39,12 @@ type (
 		unexported  string                  `form:"unexported"`
 	}
 
+	// Optional pointer fields to assign nil when not passed in
+	Note struct {
+		Id      int     `form:"id" json: "id" binding:"required"`
+		Content *string `form:"content" json:"content,omitempty"`
+	}
+
 	// The common function signature of the handlers going under test.
 	handlerFunc func(interface{}, ...interface{}) martini.Handler
 

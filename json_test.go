@@ -93,6 +93,13 @@ var jsonTestCases = []jsonTestCase{
 		contentType:         jsonContentType,
 		expected:            BlogPost{Id: 1, Author: Person{Name: "Matt Holt"}},
 	},
+	{
+		description:         "Deserialization with pointer basic types",
+		shouldSucceedOnJson: true,
+		payload:             `{"id": 1, "content": "Fix Glorious post!"}`,
+		contentType:         jsonContentType,
+		expected:            Note{Id: 1, Content: func(s string) *string { return &s }("Fix Glorious post!")},
+	},
 }
 
 func TestJson(t *testing.T) {
@@ -151,6 +158,10 @@ func performJsonTest(t *testing.T, binder handlerFunc, testCase jsonTestCase) {
 				jsonTestHandler(actual, errs)
 			})
 		}
+	case Note:
+		m.Post(testRoute, binder(Note{}), func(actual Note, errs Errors) {
+			jsonTestHandler(actual, errs)
+		})
 	}
 
 	if testCase.payload == "-nil-" {
